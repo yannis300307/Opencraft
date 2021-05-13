@@ -3,13 +3,14 @@ package fr.opencraft.core.world
 import fr.opencraft.core.entity.Entity
 import fr.opencraft.core.math.Vec3
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.ConcurrentSkipListSet
 
 class World {
 	private val chunks = ConcurrentHashMap<ChunkPosition, Chunk>()
-	private val createdChunks = ConcurrentSkipListSet<Chunk>()
-	private val removedChunks = ConcurrentSkipListSet<ChunkPosition>()
-	private val updatedChunks = ConcurrentSkipListSet<ChunkPosition>()
+	val createdChunks = ConcurrentLinkedQueue<Chunk>()
+	val removedChunks = ConcurrentLinkedQueue<ChunkPosition>()
+	val updatedChunks = ConcurrentLinkedQueue<ChunkPosition>()
 	private val entities = ConcurrentHashMap<Int, EntityState>()
 
 	fun getChunk(position: ChunkPosition) = chunks[position]
@@ -29,6 +30,7 @@ class World {
 	}
 
 	fun updateChunk(position: ChunkPosition) {
+		if (updatedChunks.contains(position)) return
 		updatedChunks.add(position)
 	}
 

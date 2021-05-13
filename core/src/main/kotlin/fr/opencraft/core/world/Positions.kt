@@ -7,7 +7,8 @@ import kotlin.math.*
 interface Position
 
 data class BlockPosition(val x: Int, val y: Int, val z: Int) : Position {
-	constructor(vec: Vec3) : this(vec.x.toBlock(), vec.y.toBlock(), vec.z.toBlock())
+	constructor(x: Number, y: Number, z: Number) : this(x.toBlock(), y.toBlock(), z.toBlock())
+	constructor(vec: Vec3) : this(vec.x, vec.y, vec.z)
 
 	fun toWorld() = Vec3(x, y, z)
 	fun toChunk() = toWorld().toChunk()
@@ -15,14 +16,16 @@ data class BlockPosition(val x: Int, val y: Int, val z: Int) : Position {
 }
 
 data class ChunkPosition(val x: Int, val y: Int, val z: Int) {
-	constructor(vec: Vec3) : this(vec.x.toChunk(), vec.y.toChunk(), vec.z.toChunk())
+	constructor(x: Number, y: Number, z: Number) : this(x.toChunk(), y.toChunk(), z.toChunk())
+	constructor(vec: Vec3) : this(vec.x, vec.y, vec.z)
 
 	fun toWorld() = Vec3(x * CHUNK_SIZE, y * CHUNK_SIZE, z * CHUNK_SIZE)
 	fun toLocal() = toWorld().toLocal()
 }
 
 data class LocalPosition(val x: Int, val y: Int, val z: Int) : Position {
-	constructor(vec: Vec3) : this(vec.x.toLocal(), vec.y.toLocal(), vec.z.toLocal())
+	constructor(x: Number, y: Number, z: Number) : this(x.toLocal(), y.toLocal(), z.toLocal())
+	constructor(vec: Vec3) : this(vec.x, vec.y, vec.z)
 
 	fun toWorld(chunk: ChunkPosition) = chunk.toWorld() + Vec3(x, y, z)
 }

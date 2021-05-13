@@ -1,12 +1,20 @@
 package fr.opencraft.client
 
 import fr.opencraft.client.input.Input
+import fr.opencraft.client.render.Camera
 import fr.opencraft.client.render.Display
+import fr.opencraft.client.render.renderer.world.WorldRenderer
+import fr.opencraft.core.GameCore
 import kotlin.system.exitProcess
 
 class GameClient {
 	lateinit var display: Display
 	lateinit var input: Input
+	lateinit var camera: Camera
+
+	lateinit var core: GameCore
+
+	lateinit var worldRenderer: WorldRenderer
 
 	var fps = 0f; private set
 	var frameTime = 1f / 300f
@@ -45,19 +53,34 @@ class GameClient {
 	fun init() {
 		display = Display("Opencraft", 800, 600)
 		input = Input(this)
+		camera = Camera(this)
+
+		core = GameCore()
+
+		worldRenderer = WorldRenderer(core.world)
 	}
 
-	fun dispose() {
+	private fun dispose() {
+		worldRenderer.dispose()
+
 		display.dispose()
 	}
 
-	fun update(delta: Float) {
+	private fun update(delta: Float) {
 		display.update()
 		input.update()
+
+		if (display.resized) camera.calculateProjection()
+		camera.calculateView()
+
+		worldRenderer.update()
 	}
 
-	fun render() {
+	private fun render() {
 		display.clear()
+
+		worldRenderer.render(camera)
+
 		display.swapBuffers()
 	}
 }
