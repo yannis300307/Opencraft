@@ -1,2 +1,6 @@
 .gradle
 .idea/workspace.xml
+
+build
+core/build
+client/build
