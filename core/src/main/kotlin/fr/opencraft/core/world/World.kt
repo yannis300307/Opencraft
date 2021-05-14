@@ -34,6 +34,10 @@ class World {
 		updatedChunks.add(position)
 	}
 
+	fun removeAllChunks() {
+		chunks.forEach { removeChunk(it.key) }
+	}
+
 	fun getBlock(position: BlockPosition): BlockState? {
 		val chunk = getChunk(position.toChunk()) ?: return null
 		return chunk.getBlock(position.toLocal())
@@ -50,5 +54,9 @@ class World {
 
 	fun removeEntity(identifier: Int) {
 		entities.remove(identifier)
+	}
+
+	fun removeAllEntities() {
+		entities.clear()
 	}
 }

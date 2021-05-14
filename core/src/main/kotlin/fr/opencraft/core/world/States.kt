@@ -13,4 +13,4 @@ class BlockState(internal var block: Block, val chunk: Chunk, val position: Loca
 		}
 }
 
-class EntityState(val entity: Entity, val world: World, val identifier: Int, val position: Vec3 = Vec3(), val rotation: Vec3 = Vec3())
+class EntityState(val entity: Entity, val world: World, val identifier: Int, var position: Vec3 = Vec3(), var rotation: Vec3 = Vec3())
