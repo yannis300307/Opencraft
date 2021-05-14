@@ -47,7 +47,7 @@ class ChunkRenderer(val world: World, val chunk: Chunk) {
 					vertexCount += 4 * BlockData.addBlockData(
 						buffer,
 						pos,
-						if (block.type == Blocks.STONE) Vec3(0.5f) else Vec3(1f, 0f, 0f), // TODO: Make Color System (or texture)
+						Vec3(0.5f), // TODO: Make Color System (or texture)
 						down, up,
 						left, right,
 						back, front

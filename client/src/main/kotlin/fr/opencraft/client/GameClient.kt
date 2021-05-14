@@ -9,6 +9,8 @@ import fr.opencraft.client.network.packets.send.connect.ConnectionPacket
 import fr.opencraft.client.network.packets.send.connect.DisconnectPacket
 import fr.opencraft.client.render.Camera
 import fr.opencraft.client.render.Display
+import fr.opencraft.client.render.registry.RenderRegistry
+import fr.opencraft.client.render.renderer.entity.EntityRenderers
 import fr.opencraft.client.render.renderer.world.WorldRenderer
 import fr.opencraft.core.GameCore
 import fr.opencraft.core.world.EntityState
@@ -30,7 +32,7 @@ class GameClient {
 	lateinit var worldRenderer: WorldRenderer
 
 	var fps = 0f; private set
-	var frameTime = 0f
+	var frameTime = 1f / 60f
 
 	fun start() {
 		init()
@@ -65,6 +67,7 @@ class GameClient {
 
 	fun init() {
 		core = GameCore()
+		EntityRenderers.init()
 
 		display = Display("Opencraft", 800, 600)
 		input = Input(this)

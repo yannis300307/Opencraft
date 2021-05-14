@@ -54,6 +54,6 @@ class PlayerController(val client: GameClient) {
 
 	companion object {
 		const val MIN_MOVEMENT_TO_REMOTE = 0.5f
-		const val MIN_ROTATION_TO_REMOTE = 10f
+		const val MIN_ROTATION_TO_REMOTE = 25f
 	}
 }

@@ -8,8 +8,7 @@ class GameCore {
 	val world = World()
 
 	init {
-		// Define Blocks and Entities
-		Blocks.toString()
-		Entities.toString()
+		Blocks.init()
+		Entities.init()
 	}
 }

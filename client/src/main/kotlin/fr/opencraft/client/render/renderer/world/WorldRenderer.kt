@@ -1,14 +1,17 @@
 package fr.opencraft.client.render.renderer.world
 
 import fr.opencraft.client.render.Camera
-import fr.opencraft.client.render.shader.WorldShader
+import fr.opencraft.client.render.registry.RenderRegistry
+import fr.opencraft.client.render.shader.ChunkShader
+import fr.opencraft.client.render.shader.EntityShader
 import fr.opencraft.core.world.ChunkPosition
 import fr.opencraft.core.world.World
 import org.lwjgl.opengl.GL11.*
 
 class WorldRenderer(val world: World) {
 	private val chunkRenderers = HashMap<ChunkPosition, ChunkRenderer>()
-	private val shader = WorldShader()
+	private val chunkShader = ChunkShader()
+	private val entityShader = EntityShader()
 
 	init {
 		glEnable(GL_DEPTH_TEST)
@@ -19,7 +22,8 @@ class WorldRenderer(val world: World) {
 	fun dispose() {
 		chunkRenderers.forEach { (_, renderer) -> renderer.dispose() }
 		chunkRenderers.clear()
-		shader.dispose()
+		chunkShader.dispose()
+		entityShader.dispose()
 	}
 
 	fun update() {
@@ -50,8 +54,14 @@ class WorldRenderer(val world: World) {
 	}
 
 	fun render(camera: Camera) {
-		shader.bind(camera)
+		// Render Chunks
+		chunkShader.bind(camera)
 		chunkRenderers.forEach { (_, renderer) -> renderer.render() }
-		shader.unbind()
+		chunkShader.unbind()
+
+		// Render Entities
+		entityShader.bind(camera)
+		world.entities.forEach { (_, entity) -> RenderRegistry.getEntityRenderer(entity.type)?.render(entity) }
+		entityShader.unbind()
 	}
 }
