@@ -5,11 +5,9 @@ import fr.opencraft.client.control.PlayerController
 import fr.opencraft.client.input.Input
 import fr.opencraft.client.input.Keys
 import fr.opencraft.client.network.Network
-import fr.opencraft.client.network.packets.send.connect.ConnectionPacket
-import fr.opencraft.client.network.packets.send.connect.DisconnectPacket
+import fr.opencraft.client.network.packets.send.connect.*
 import fr.opencraft.client.render.Camera
 import fr.opencraft.client.render.Display
-import fr.opencraft.client.render.registry.RenderRegistry
 import fr.opencraft.client.render.renderer.entity.EntityRenderers
 import fr.opencraft.client.render.renderer.world.WorldRenderer
 import fr.opencraft.core.GameCore
@@ -65,7 +63,7 @@ class GameClient {
 		exitProcess(0)
 	}
 
-	fun init() {
+	private fun init() {
 		core = GameCore()
 		EntityRenderers.init()
 
