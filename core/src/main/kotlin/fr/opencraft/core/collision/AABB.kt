@@ -1,6 +1,10 @@
 package fr.opencraft.core.collision
 
+import fr.opencraft.core.block.CollideBlock
 import fr.opencraft.core.math.Vec3
+import fr.opencraft.core.world.BlockPosition
+import fr.opencraft.core.world.World
+import fr.opencraft.core.world.toBlock
 import kotlin.math.abs
 import kotlin.math.sign
 
@@ -26,33 +30,52 @@ data class AABB(val pos: Vec3, val size: Vec3) {
 
 		// Calculate Collision
 		if (px < py && px < pz) {
-			val sx = sign(dx)
+			val sx = -sign(dx)
 			return CollisionData(
-				this,
-				other,
-				Vec3(center.x + (half.x * sx), center.y, center.z),
 				Vec3(sx, 0, 0),
 				Vec3(px * sx, 0f, 0f)
 			)
 		} else if (py < px && py < pz) {
-			val sy = sign(dy)
+			val sy = -sign(dy)
 			return CollisionData(
-				this,
-				other,
-				Vec3(center.x, center.y + (half.y * sy), center.z),
 				Vec3(0f, sy, 0f),
 				Vec3(0f, py * sy, 0f)
 			)
 		} else {
-			val sz = sign(dz)
+			val sz = -sign(dz)
 			return CollisionData(
-				this,
-				other,
-				Vec3(center.x, center.y, center.z + (half.z * sz)),
 				Vec3(0f, 0f, sz),
 				Vec3(0f, 0f, pz * sz)
 			)
 		}
+	}
+
+	fun getCollisionData(world: World): CollisionData? {
+		val min = (pos).toBlock()
+		val max = (pos + size).toBlock()
+
+		var delta = Vec3()
+
+		for (x in min.x..max.x) {
+			for (y in min.y..max.y) {
+				for (z in min.z..max.z) {
+					val state = world.getBlock(BlockPosition(x, y, z)) ?: continue
+					val block = state.type
+					if (block is CollideBlock) {
+						val other = block.getBounds(state)
+						val collision = getCollisionData(other)
+						if (collision != null) {
+							delta.x = if (abs(collision.delta.x) >= abs(delta.x)) collision.delta.x else delta.x
+							delta.y = if (abs(collision.delta.y) >= abs(delta.y)) collision.delta.y else delta.y
+							delta.z = if (abs(collision.delta.z) >= abs(delta.z)) collision.delta.z else delta.z
+						}
+					}
+				}
+			}
+		}
+
+		if (delta.length == 0f) return null
+		return CollisionData(Vec3(), delta)
 	}
 
 	companion object {

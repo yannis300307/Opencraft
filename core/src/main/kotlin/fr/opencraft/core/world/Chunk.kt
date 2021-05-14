@@ -26,5 +26,13 @@ class Chunk(val world: World, val position: ChunkPosition) {
 		}
 
 		world.updateChunk(position)
+
+		// Update Surroundings
+		world.updateChunk(ChunkPosition(position.x+1, position.y, position.z))
+		world.updateChunk(ChunkPosition(position.x-1, position.y, position.z))
+		world.updateChunk(ChunkPosition(position.x, position.y+1, position.z))
+		world.updateChunk(ChunkPosition(position.x, position.y-1, position.z))
+		world.updateChunk(ChunkPosition(position.x, position.y, position.z+1))
+		world.updateChunk(ChunkPosition(position.x, position.y, position.z-1))
 	}
 }

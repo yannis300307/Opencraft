@@ -1,6 +1,7 @@
 package fr.opencraft.client.network.packets.receive.world
 
 import fr.opencraft.client.GameClient
+import fr.opencraft.client.GameState
 import fr.opencraft.client.network.ReceivePacket
 import fr.opencraft.core.util.DataInput
 import fr.opencraft.core.world.ChunkPosition

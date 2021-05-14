@@ -7,11 +7,11 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.ConcurrentSkipListSet
 
 class World {
-	private val chunks = ConcurrentHashMap<ChunkPosition, Chunk>()
+	val chunks = ConcurrentHashMap<ChunkPosition, Chunk>()
 	val createdChunks = ConcurrentLinkedQueue<Chunk>()
 	val removedChunks = ConcurrentLinkedQueue<ChunkPosition>()
 	val updatedChunks = ConcurrentLinkedQueue<ChunkPosition>()
-	private val entities = ConcurrentHashMap<Int, EntityState>()
+	val entities = ConcurrentHashMap<Int, EntityState>()
 
 	fun getChunk(position: ChunkPosition) = chunks[position]
 

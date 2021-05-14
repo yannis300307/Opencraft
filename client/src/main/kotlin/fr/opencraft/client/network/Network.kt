@@ -1,6 +1,7 @@
 package fr.opencraft.client.network
 
 import fr.opencraft.client.GameClient
+import fr.opencraft.client.GameState
 import fr.opencraft.core.GameCore
 import fr.opencraft.client.network.ReceivePacket.Companion.PACKET_SIZE
 import fr.opencraft.core.util.DataInput
@@ -41,18 +42,22 @@ class Network(val client: GameClient) {
 		this.port = port
 
 		try {
+			print("Try to connect (${address.hostAddress}:$port).. ")
 			tcpSocket = Socket(address, port)
+			tcpSendPackets.clear()
 			tcpReceiveThread = thread { tcpReceiveThread() }
 			tcpSendThread = thread { tcpSendThread() }
 
 			udpSocket = DatagramSocket()
+			udpSendPackets.clear()
 			udpReceiveThread = thread { udpReceiveThread() }
 			udpSendThread = thread { udpSendThread() }
 
-			println("Network Connected")
+			println("Success")
 			connected = true
+			client.state = GameState.CONNECTING
 		} catch (e: Exception) {
-			println("Can't connect to $address:$port : ${e.message}")
+			println("Fail : ${e.message}")
 		}
 	}
 
@@ -60,7 +65,6 @@ class Network(val client: GameClient) {
 		if (!connected || closing) return
 		closing = true
 
-		println("Closing TCP...")
 		tcpSocket!!.close()
 		tcpReceiveThread.join()
 		sendThreadLock.withLock {
@@ -69,7 +73,6 @@ class Network(val client: GameClient) {
 		tcpSendThread.join()
 		tcpSocket = null
 
-		println("Closing UDP...")
 		udpSocket!!.close()
 		udpReceiveThread.join()
 		sendThreadLock.withLock {
@@ -81,6 +84,7 @@ class Network(val client: GameClient) {
 		println("Network Closed")
 		connected = false
 		closing = false
+		client.state = GameState.DISCONNECTED
 	}
 
 	fun sendTcp(packet: SendPacket) {
@@ -98,7 +102,7 @@ class Network(val client: GameClient) {
 	}
 
 	private fun tcpReceiveThread() {
-		println("TCP Receive Thread Started")
+		//println("TCP Receive Thread Started")
 		val input = DataInput(tcpSocket!!.getInputStream())
 		while (!closing) {
 			try {
@@ -114,11 +118,11 @@ class Network(val client: GameClient) {
 			}
 		}
 		if (!closing) thread { disconnect() }
-		println("TCP Receive Thread Closed")
+		//println("TCP Receive Thread Closed")
 	}
 
 	private fun tcpSendThread() {
-		println("TCP Send Thread Started")
+		//println("TCP Send Thread Started")
 		val output = DataOutput(tcpSocket!!.getOutputStream())
 		while (!closing) {
 			try {
@@ -139,11 +143,11 @@ class Network(val client: GameClient) {
 			}
 		}
 		if (!closing) thread { disconnect() }
-		println("TCP Send Thread Closed")
+		//println("TCP Send Thread Closed")
 	}
 
 	private fun udpReceiveThread() {
-		println("UDP Receive Thread Started")
+		//println("UDP Receive Thread Started")
 		while (!closing) {
 			try {
 				val datagram = DatagramPacket(ByteArray(PACKET_SIZE), PACKET_SIZE)
@@ -160,11 +164,11 @@ class Network(val client: GameClient) {
 			}
 		}
 		if (!closing) thread { disconnect() }
-		println("UDP Receive Thread Closed")
+		//println("UDP Receive Thread Closed")
 	}
 
 	private fun udpSendThread() {
-		println("UDP Send Thread Started")
+		//println("UDP Send Thread Started")
 		while (!closing) {
 			try {
 				if (udpSendPackets.size > 0) {
@@ -188,6 +192,6 @@ class Network(val client: GameClient) {
 			}
 		}
 		if (!closing) thread { disconnect() }
-		println("UDP Send Thread Closed")
+		//println("UDP Send Thread Closed")
 	}
 }

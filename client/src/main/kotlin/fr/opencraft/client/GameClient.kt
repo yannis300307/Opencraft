@@ -1,5 +1,7 @@
 package fr.opencraft.client
 
+import fr.opencraft.client.control.CameraController
+import fr.opencraft.client.control.PlayerController
 import fr.opencraft.client.input.Input
 import fr.opencraft.client.input.Keys
 import fr.opencraft.client.network.Network
@@ -9,21 +11,26 @@ import fr.opencraft.client.render.Camera
 import fr.opencraft.client.render.Display
 import fr.opencraft.client.render.renderer.world.WorldRenderer
 import fr.opencraft.core.GameCore
+import fr.opencraft.core.world.EntityState
 import java.net.InetAddress
 import kotlin.system.exitProcess
 
 class GameClient {
 	lateinit var core: GameCore
+	var state = GameState.DISCONNECTED
+	var player: EntityState? = null
 
 	lateinit var display: Display
 	lateinit var input: Input
-	lateinit var camera: Camera
 	lateinit var network: Network
+	lateinit var playerController: PlayerController
+	lateinit var camera: Camera
+	lateinit var cameraController: CameraController
 
 	lateinit var worldRenderer: WorldRenderer
 
 	var fps = 0f; private set
-	var frameTime = 1f / 300f
+	var frameTime = 0f
 
 	fun start() {
 		init()
@@ -61,8 +68,10 @@ class GameClient {
 
 		display = Display("Opencraft", 800, 600)
 		input = Input(this)
-		camera = Camera(this)
 		network = Network(this)
+		playerController = PlayerController(this)
+		camera = Camera(this)
+		cameraController = CameraController(this)
 
 		worldRenderer = WorldRenderer(core.world)
 	}
@@ -83,7 +92,8 @@ class GameClient {
 		if (input.isKeyPressed(Keys.KEY_C)) {
 			core.world.removeAllEntities()
 			core.world.removeAllChunks()
-			network.connect(InetAddress.getByName("86.206.92.249"), 9322)
+			//network.connect(InetAddress.getByName("86.206.92.249"), 9322)
+			network.connect(InetAddress.getByName("localhost"), 9322)
 			network.sendTcp(ConnectionPacket("Michel", 3, network.udpPort))
 		}
 		if (input.isKeyPressed(Keys.KEY_V)) {
@@ -93,6 +103,11 @@ class GameClient {
 			core.world.removeAllChunks()
 		}
 
+		if (state == GameState.GAME) {
+			playerController.update(delta)
+		} else if (input.mouseGrab) input.mouseGrab = false
+
+		cameraController.update(delta)
 		if (display.resized) camera.calculateProjection()
 		camera.calculateView()
 

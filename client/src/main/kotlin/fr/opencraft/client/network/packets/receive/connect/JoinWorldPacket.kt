@@ -1,6 +1,7 @@
 package fr.opencraft.client.network.packets.receive.connect
 
 import fr.opencraft.client.GameClient
+import fr.opencraft.client.GameState
 import fr.opencraft.client.network.ReceivePacket
 import fr.opencraft.core.math.Vec3
 import fr.opencraft.core.util.DataInput
@@ -19,6 +20,8 @@ class JoinWorldPacket : ReceivePacket() {
 		)
 
 		println("Join World (Position = $position, Rotation = $rotation)")
-		// TODO: Join World Packet
+		client.playerController.player!!.position = position
+		client.playerController.player!!.rotation = rotation
+		client.state = GameState.GAME
 	}
 }
