@@ -1,3 +1,9 @@
 package fr.opencraft.core.block
 
-class AirBlock : Block(0)
+import fr.opencraft.core.world.BlockState
+
+class AirBlock : Block(0) {
+	override fun isFullFace(state: BlockState, face: BlockFace): Boolean {
+		return false
+	}
+}

@@ -17,6 +17,8 @@ class WorldRenderer(val world: World) {
 		glEnable(GL_DEPTH_TEST)
 		glEnable(GL_CULL_FACE)
 		glCullFace(GL_FRONT)
+		glEnable(GL_TEXTURE_2D)
+		glClearColor(0f, 0f, 1f, 1f)
 	}
 
 	fun dispose() {

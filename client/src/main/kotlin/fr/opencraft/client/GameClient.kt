@@ -6,13 +6,19 @@ import fr.opencraft.client.input.Input
 import fr.opencraft.client.input.Keys
 import fr.opencraft.client.network.Network
 import fr.opencraft.client.network.packets.send.connect.*
+import fr.opencraft.client.render.Buffers
 import fr.opencraft.client.render.Camera
 import fr.opencraft.client.render.Display
+import fr.opencraft.client.render.renderer.block.BlockRenderer
+import fr.opencraft.client.render.renderer.block.BlockRenderers
 import fr.opencraft.client.render.renderer.entity.EntityRenderers
 import fr.opencraft.client.render.renderer.world.WorldRenderer
+import fr.opencraft.client.render.texture.Texture
+import fr.opencraft.client.render.texture.Textures
 import fr.opencraft.core.GameCore
 import fr.opencraft.core.world.EntityState
 import java.net.InetAddress
+import javax.swing.JOptionPane
 import kotlin.system.exitProcess
 
 class GameClient {
@@ -65,7 +71,6 @@ class GameClient {
 
 	private fun init() {
 		core = GameCore()
-		EntityRenderers.init()
 
 		display = Display("Opencraft", 800, 600)
 		input = Input(this)
@@ -74,6 +79,9 @@ class GameClient {
 		camera = Camera(this)
 		cameraController = CameraController(this)
 
+		Textures.init()
+		BlockRenderers.init()
+		EntityRenderers.init()
 		worldRenderer = WorldRenderer(core.world)
 	}
 
@@ -82,6 +90,7 @@ class GameClient {
 
 		worldRenderer.dispose()
 
+		Buffers.clean()
 		display.dispose()
 	}
 
@@ -93,9 +102,9 @@ class GameClient {
 		if (input.isKeyPressed(Keys.KEY_C)) {
 			core.world.removeAllEntities()
 			core.world.removeAllChunks()
-			//network.connect(InetAddress.getByName("86.206.92.249"), 9322)
-			network.connect(InetAddress.getByName("localhost"), 9322)
-			network.sendTcp(ConnectionPacket("Michel", 3, network.udpPort))
+			network.connect(InetAddress.getByName("86.206.159.21"), 9322)
+			//network.connect(InetAddress.getByName("localhost"), 9322)
+			network.sendTcp(ConnectionPacket(JOptionPane.showInputDialog("Quel est ton nom ?"), 3, network.udpPort))
 		}
 		if (input.isKeyPressed(Keys.KEY_V)) {
 			network.disconnect()

@@ -33,4 +33,8 @@ object FileUtil {
 			null
 		}
 	}
+
+	fun resource(path: String): InputStream? {
+		return javaClass.getResourceAsStream("/$path")
+	}
 }

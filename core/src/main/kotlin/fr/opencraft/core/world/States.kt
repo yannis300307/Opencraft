@@ -1,6 +1,7 @@
 package fr.opencraft.core.world
 
 import fr.opencraft.core.block.Block
+import fr.opencraft.core.block.BlockFace
 import fr.opencraft.core.entity.Entity
 import fr.opencraft.core.math.Vec3
 import fr.opencraft.core.world.WorldSettings.CHUNK_SIZE
@@ -24,6 +25,8 @@ class BlockState(internal var block: Block, val chunk: Chunk, val position: Loca
 			if (position.z == 0) chunk.world.updateChunk(ChunkPosition(position.x, position.y, position.z-1))
 			if (position.z == CHUNK_SIZE-1) chunk.world.updateChunk(ChunkPosition(position.x, position.y, position.z+1))
 		}
+
+	fun isFullFace(face: BlockFace) = type.isFullFace(this, face)
 }
 
 class EntityState(

@@ -6,6 +6,7 @@ object Buffers {
 	private val vaoList = HashSet<Int>()
 	private val vboList = HashSet<Int>()
 	private val programs = HashSet<Int>()
+	private val textures = HashSet<Int>()
 
 	fun createVertexArray() : Int {
 		val vao = glGenVertexArrays()
@@ -43,6 +44,18 @@ object Buffers {
 		glDeleteProgram(id)
 	}
 
+	fun createTexture() : Int {
+		val texture = glGenTextures()
+		if (texture == 0) throw RuntimeException("Unable to create a texture")
+		textures.add(texture)
+		return texture
+	}
+
+	fun deleteTexture(id: Int) {
+		textures.remove(id)
+		glDeleteTextures(id)
+	}
+
 	fun clean() {
 		for (vao in vaoList) {
 			glDeleteVertexArrays(vao)
@@ -58,5 +71,10 @@ object Buffers {
 			glDeleteProgram(program)
 		}
 		programs.clear()
+
+		for (texture in textures) {
+			glDeleteTextures(texture)
+		}
+		textures.clear()
 	}
 }

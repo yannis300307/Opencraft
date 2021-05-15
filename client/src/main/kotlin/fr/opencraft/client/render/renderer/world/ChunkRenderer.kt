@@ -1,6 +1,7 @@
 package fr.opencraft.client.render.renderer.world
 
 import fr.opencraft.client.render.Buffers
+import fr.opencraft.client.render.registry.RenderRegistry
 import fr.opencraft.core.block.Blocks
 import fr.opencraft.core.math.Vec3
 import fr.opencraft.core.world.*
@@ -34,24 +35,8 @@ class ChunkRenderer(val world: World, val chunk: Chunk) {
 					val block = chunk.getBlock(position)
 					if (block.type == Blocks.AIR) continue
 
-					val pos = position.toWorld(chunk.position)
-
-					val down = world.getBlock(BlockPosition(pos.x, pos.y - 1, pos.z))?.type != Blocks.AIR
-					val up = world.getBlock(BlockPosition(pos.x, pos.y + 1, pos.z))?.type != Blocks.AIR
-					val left = world.getBlock(BlockPosition(pos.x - 1, pos.y, pos.z))?.type != Blocks.AIR
-					val right = world.getBlock(BlockPosition(pos.x + 1, pos.y, pos.z))?.type != Blocks.AIR
-					val back = world.getBlock(BlockPosition(pos.x, pos.y, pos.z - 1))?.type != Blocks.AIR
-					val front = world.getBlock(BlockPosition(pos.x, pos.y, pos.z + 1))?.type != Blocks.AIR
-
-					if (up && down && left && right && front && back) continue
-					vertexCount += 4 * BlockData.addBlockData(
-						buffer,
-						pos,
-						Vec3(0.5f), // TODO: Make Color System (or texture)
-						down, up,
-						left, right,
-						back, front
-					)
+					val size = RenderRegistry.getBlockRenderer(block.type)?.render(block, buffer)
+					if (size != null) vertexCount += size
 				}
 			}
 		}
@@ -64,8 +49,8 @@ class ChunkRenderer(val world: World, val chunk: Chunk) {
 		glEnableVertexAttribArray(1)
 		glBindBuffer(GL_ARRAY_BUFFER, vbo)
 		glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW)
-		glVertexAttribPointer(0, 3, GL_FLOAT, false, 6 * 4, 0L)
-		glVertexAttribPointer(1, 3, GL_FLOAT, false, 6 * 4, 12L)
+		glVertexAttribPointer(0, 3, GL_FLOAT, false, 5 * 4, 0L)
+		glVertexAttribPointer(1, 2, GL_FLOAT, false, 5 * 4, 12L)
 		glBindVertexArray(0)
 	}
 
