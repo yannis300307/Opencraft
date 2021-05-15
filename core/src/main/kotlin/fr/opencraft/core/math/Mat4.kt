@@ -30,8 +30,6 @@ data class Mat4(val data: FloatArray = FloatArray(16) { 0f }) {
 		data[y * 4 + x] = value
 	}
 
-	operator fun not(): Mat4 = TODO("Invert matrix here")
-
 	operator fun times(other: Mat4): Mat4 {
 		val result = Mat4()
 
